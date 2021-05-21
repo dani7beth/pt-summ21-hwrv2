@@ -1,4 +1,8 @@
 class StoreMenu
+  def initialize(wallet)
+    @wallet = wallet
+  end
+
   def init_menu(store)
     case store
     when 1
@@ -28,10 +32,18 @@ class StoreMenu
     case selected_option
     when 1
       puts "you selected phone"
-      cart << options[0]
+      validation = @wallet.validate_money(options[0][:price].to_f)
+      if validation
+        cart << options[0][:price]
+      else
+        puts "not enough money for this item :("
+        self.best_buy_menu
+      end
       puts "Are you done shopping? y/n"
       answer = gets.strip
       if answer == "y"
+        total = 200
+        @wallet.subtract_money(total)
         puts "Thanks for shopping at Best Buy!"
       elsif answer == "n"
         self.best_buy_menu
@@ -80,7 +92,13 @@ class StoreMenu
       end
     else
       puts "that is an invalid option \n".colorize(:red)
-      self.best_buy_menu
+      puts "do you want to continue shopping? y/n"
+      answer2 = gets.strip
+      if answer2 == "y"
+        self.best_buy_menu
+      else
+        puts "thanks for shopping at Best Buy!"
+      end
     end
   end
 
@@ -149,7 +167,13 @@ class StoreMenu
       end
     else
       puts "that is an invalid option \n".colorize(:red)
-      self.macys_menu
+       puts "do you want to continue shopping? y/n"
+        answer2 = gets.strip
+        if answer2 == "y"
+          self.macys_menu
+        else
+          puts "thanks for shopping at Macy's!"
+        end
     end
   end
 end
